@@ -6,7 +6,7 @@ import {
   MessageList,
   SessionChatMessage,
 } from "teleparty-websocket-lib";
-import { Stack, Heading } from "@chakra-ui/react";
+import { Stack, Heading, Center, Spinner } from "@chakra-ui/react";
 import ViewMessages from "./ViewMessages/ViewMessages";
 import SendRoomMessage from "./SendRoomMessage/SendRoomMessage";
 import SelectUser, { HandleUserSubmitType } from "../components/SelectUser";
@@ -79,6 +79,12 @@ export default function Room(): JSX.Element {
     joinRoom();
   }, [router.query.nick, client]);
 
+  if (client == null) {
+    <Center>
+      <Spinner />
+    </Center>;
+  }
+
   if (router.query.nick == null) {
     return (
       <Stack spacing={2}>
@@ -90,7 +96,7 @@ export default function Room(): JSX.Element {
 
   return (
     <Stack pb={16} spacing={8}>
-      <Heading fontSize='lg'>Room {router.query.slug}</Heading>
+      <Heading fontSize='4xl'>Room {router.query.slug}</Heading>
       <ViewMessages messages={messages} />
       <SendRoomMessage client={client} typing={typing} />
     </Stack>

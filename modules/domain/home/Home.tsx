@@ -1,4 +1,4 @@
-import { Heading, Stack, Text } from "@chakra-ui/react";
+import { Heading, Stack, Text, Center, Spinner } from "@chakra-ui/react";
 import { TelepartyClient, SocketEventHandler } from "teleparty-websocket-lib";
 import CreateChatRoom from "./CreateChatRoom/CreateChatRoom";
 import { useEffect, useState } from "react";
@@ -26,6 +26,13 @@ export default function Home(): JSX.Element {
       newClient.teardown();
     };
   }, []);
+
+  if (client == null) {
+    <Center>
+      <Spinner />
+    </Center>;
+  }
+
   return (
     <Stack spacing={8}>
       <Stack spacing={2}>

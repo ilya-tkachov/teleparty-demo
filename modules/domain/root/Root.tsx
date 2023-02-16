@@ -15,7 +15,9 @@ export default function Root(props: Props): JSX.Element {
 
   return (
     <Flex align='center' justify='center'>
-      <Container maxW='container.xl'>{children}</Container>
+      <Container py={4} maxW='container.xl'>
+        {children}
+      </Container>
     </Flex>
   );
 }

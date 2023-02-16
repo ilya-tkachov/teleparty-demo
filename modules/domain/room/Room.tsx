@@ -1,30 +1,48 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { TelepartyClient, SocketEventHandler } from "teleparty-websocket-lib";
-import { Stack, Heading, HStack, Input, Button } from "@chakra-ui/react";
+import {
+  TelepartyClient,
+  SocketEventHandler,
+  MessageList,
+  SessionChatMessage,
+} from "teleparty-websocket-lib";
+import { Stack, Heading } from "@chakra-ui/react";
 import ViewMessages from "./ViewMessages/ViewMessages";
 import SendRoomMessage from "./SendRoomMessage/SendRoomMessage";
+import SelectUser, { HandleUserSubmitType } from "../components/SelectUser";
+import { TelepartyType } from "@/modules/types";
+
+export type MessageType = SessionChatMessage[];
+export type TypingType = string[];
 
 export default function Room(): JSX.Element {
-  const [client, setClient] = useState<typeof TelepartyClient>();
-  const [nickname, setNickname] = useState("Anonymous");
+  const [client, setClient] = useState<TelepartyType>();
   const router = useRouter();
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<MessageType>([]);
+  const [typing, setTyping] = useState<TypingType>([]);
 
-  const onEnterNickname = (): void => {
-    console.log(nickname);
+  const handleSubmit: HandleUserSubmitType = (name, avatar) => {
     router.push({
       pathname: "/room/[slug]",
       query: {
         slug: router.query.slug,
-        nick: nickname,
+        nick: name,
+        avatar: avatar,
       },
     });
   };
 
   const joinRoom = () => {
     if (client == null || router?.query?.nick == null) return;
-    client.joinChatRoom(router.query.nick, router.query.slug, "");
+    client
+      .joinChatRoom(
+        (router?.query?.nick as string) ?? "Anonymous",
+        router.query.slug as string,
+        (router?.query?.avatar as string) ?? ""
+      )
+      .then((messages) => {
+        setMessages(messages.messages);
+      });
   };
 
   useEffect(() => {
@@ -40,6 +58,9 @@ export default function Room(): JSX.Element {
         switch (message.type) {
           case "sendMessage":
             setMessages((val) => [...val, message.data]);
+            break;
+          case "setTypingPresence":
+            setTyping(message.data.usersTyping);
             break;
           default:
             console.log(JSON.stringify(message));
@@ -62,24 +83,16 @@ export default function Room(): JSX.Element {
     return (
       <Stack spacing={2}>
         <Heading fontSize='sm'>Enter Chat Room</Heading>
-        <HStack>
-          <Input
-            onChange={(e) => setNickname(e.target.value)}
-            placeholder='Your Nickname'
-          />
-          <Button isDisabled={client == null} onClick={onEnterNickname}>
-            Enter Room
-          </Button>
-        </HStack>
+        <SelectUser isDisabled={client == null} handleSubmit={handleSubmit} />
       </Stack>
     );
   }
 
   return (
-    <Stack spacing={8}>
+    <Stack pb={16} spacing={8}>
       <Heading fontSize='lg'>Room {router.query.slug}</Heading>
       <ViewMessages messages={messages} />
-      <SendRoomMessage client={client} />
+      <SendRoomMessage client={client} typing={typing} />
     </Stack>
   );
 }

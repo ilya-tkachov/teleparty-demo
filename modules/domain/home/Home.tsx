@@ -3,9 +3,10 @@ import { TelepartyClient, SocketEventHandler } from "teleparty-websocket-lib";
 import CreateChatRoom from "./CreateChatRoom/CreateChatRoom";
 import { useEffect, useState } from "react";
 import JoinChatRoom from "./JoinChatRoom/JoinChatRoom";
+import { TelepartyType } from "@/modules/types";
 
 export default function Home(): JSX.Element {
-  const [client, setClient] = useState<typeof TelepartyClient>();
+  const [client, setClient] = useState<TelepartyType>();
 
   useEffect(() => {
     const eventHandler: SocketEventHandler = {

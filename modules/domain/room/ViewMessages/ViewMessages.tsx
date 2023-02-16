@@ -1,9 +1,10 @@
-import { Stack, Box, Text } from "@chakra-ui/react";
+import { Stack, Box, Text, Heading, Avatar, HStack } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import { TelepartyClient, SocketEventHandler } from "teleparty-websocket-lib";
+import { MessageType, TypingType } from "../Room";
 
 interface Props {
-  messages: any[];
+  messages: MessageType;
 }
 
 export default function ViewMessages(props: Props): JSX.Element {
@@ -12,10 +13,13 @@ export default function ViewMessages(props: Props): JSX.Element {
   return (
     <Stack spacing={2}>
       {messages.map((item) => (
-        <Box key={item.timestamp}>
-          <Text fontSize='sm'>{item.userNickname}</Text>
-          <Text fontSize='sm'>{item.body}</Text>
-        </Box>
+        <HStack spacing={2} key={item.timestamp}>
+          <Avatar size={"sm"} src={item.userIcon} />
+          <Stack spacing={2}>
+            <Heading fontSize='sm'>{item.userNickname}</Heading>
+            <Text fontSize='sm'>{item.body}</Text>
+          </Stack>
+        </HStack>
       ))}
     </Stack>
   );

@@ -30,6 +30,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Create NPMRC
+        run: |
+            echo "//npm.pkg.github.com/:_authToken=${{ secrets.PACKAGES_TOKEN }}" >> ~/.npmrc
+            echo 'registry "https://registry.yarnpkg.com"' >> ~/.yarnrc
       - name: Detect package manager
         id: detect-package-manager
         run: |

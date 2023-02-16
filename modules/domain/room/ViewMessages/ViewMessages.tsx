@@ -1,4 +1,4 @@
-import { Stack, Text, Heading, Avatar, HStack } from "@chakra-ui/react";
+import { Stack, Text, Heading, Avatar, HStack, Badge } from "@chakra-ui/react";
 import { MessageType } from "../Room";
 
 interface Props {
@@ -20,7 +20,13 @@ export default function ViewMessages(props: Props): JSX.Element {
           <HStack align='flex-start' spacing={2}>
             <Text fontSize='3xl'>{item.userIcon}</Text>
             <Stack spacing={1}>
-              <Heading fontSize='sm'>{item.userNickname}</Heading>
+              <HStack spacing={2}>
+                <Heading fontSize='sm'>{item.userNickname}</Heading>
+                {item.isSystemMessage && (
+                  <Badge colorScheme='red'>SYSTEM</Badge>
+                )}
+              </HStack>
+
               <Text wordBreak='break-all' fontSize='sm'>
                 {item.body}
               </Text>
